@@ -14,18 +14,18 @@ no warnings;
 sub new { 
 	my $class = shift;    
 	my $self = {
-			"excel" => excel(),
-		 "workbook" => "",
-			 "path" => File::Spec->rel2abs(dirname(__FILE__)) =~ s/.*\<//r,
-		  "xlsPath" => "",
-			 "head" => [],				# 需要插入的头 ["你好","谢谢"]
-			 "rows" => 2,				# 需要插入的行 [2,2] 代码A列2行开始, C列2行开始
-			 "cols" => [],				# 需要插入的列 [A,C]
-         "XLS_data" => [],				# 要插入的数据 [[1,2,3,4,5],[7,8]]
-		   "forzen" => 0,				# 冻结行
-			 "name" => "Sheet1",
-			"clear" => 0,
-             "file" => ""	
+	    "excel" => excel(),
+	 "workbook" => "",
+	     "path" => File::Spec->rel2abs(dirname(__FILE__)) =~ s/.*\<//r,
+	  "xlsPath" => "",
+	     "head" => [],				# 需要插入的头 ["你好","谢谢"]
+	     "rows" => 2,				# 需要插入的行 [2,2] 代码A列2行开始, C列2行开始
+	     "cols" => [],				# 需要插入的列 [A,C]
+	 "XLS_data" => [],				# 要插入的数据 [[1,2,3,4,5],[7,8]]
+	   "forzen" => 0,				# 冻结行
+	     "name" => "Sheet1",
+	    "clear" => 0,
+	     "file" => ""	
     };
     
     # 合并数据
@@ -36,13 +36,12 @@ sub new {
             $self->{$k} = $_->{$k};
         }
     }
-	bless $self, $class;
-	return $self; 
+    bless $self, $class;
+    return $self; 
 }
 
 sub init {
-    my $self = shift;
-    
+    my $self = shift; 
     $self->{"excel"} = excel(); 
     $self->{"workbook"} = "";
     $self->{"path"} = File::Spec->rel2abs(dirname(__FILE__)) =~ s/.*\<//r;
@@ -51,10 +50,10 @@ sub init {
     $self->{"rows"} = 2;
     $self->{"cols"} = [];
     $self->{"XLS_data"} = [];
-	$self->{"forzen"} = 0;
-	$self->{"name"} = "Sheet1";			 
-	$self->{"clear"} = 0;			 
-	$self->{"file"} = "";
+    $self->{"forzen"} = 0;
+    $self->{"name"} = "Sheet1";			 
+    $self->{"clear"} = 0;			 
+    $self->{"file"} = "";
     
     foreach(@_) {
         next if ref $_ ne "HASH";
@@ -72,7 +71,7 @@ sub excel
     $excel -> {'EnableEvents'} = 0;
     $excel -> {'Visible'} = 1;
     $excel -> {'DisplayAlerts'} = 0;
-	return $excel;
+    return $excel;
 }
 
 sub initExcel
@@ -80,15 +79,14 @@ sub initExcel
     my $self = shift;
     my $num = shift || 3;				
     
-	# 创建表格  
+    # 创建表格  
 	
     $self->{"workbook"} = $self->{"excel"}->Workbooks->Add();
 	my $c = $self->{"workbook"}->Worksheets()->{'Count'};
-	
 	if($c < $num && $num > 3) {
-		foreach($c+1..$num){
-			$self->{"workbook"}->Worksheets->Add();
-		}
+	    foreach($c+1..$num){
+		$self->{"workbook"}->Worksheets->Add();
+	    }
 	} 
 }
 
@@ -98,15 +96,13 @@ sub getExcel
     # getExcel("A2")        -- 读取A2单元格
     # getExcel(["A",2])     -- 读取A列从2行起
 
-	my $self = shift;
-
-    my @range = @_;		    # 接收参数 C3, B2, D1
-    
-	my $xls_Data = [];	    # 返回结果
+    my $self = shift;
+    my @range = @_;         # 接收参数 C3, B2, D1
+    my $xls_Data = [];	    # 返回结果
     my $xls_Path = encode("gbk", $self->{"xlsPath"});
     
-	$self->{"excel"} -> {'Readonly'} = 1;
-	$self->{"workbook"} = $self->{"excel"}->Workbooks->Open($xls_Path);
+    $self->{"excel"} -> {'Readonly'} = 1;
+    $self->{"workbook"} = $self->{"excel"}->Workbooks->Open($xls_Path);
     
     # 读指定表
     
@@ -119,7 +115,7 @@ sub getExcel
     my $x = $sheet_rs->{'UsedRange'}->{'Rows'}->{'Count'};
     my $y = $sheet_rs->{'UsedRange'}->{'Columns'}->{'Count'};
      
-	foreach(@range)
+    foreach(@range)
     {
         if(ref $_ eq "")
         {
@@ -133,15 +129,15 @@ sub getExcel
         if(ref $_ eq "ARRAY"){
             push(@{$xls_Data}, [map {COM::dgbk($_->[0])} @{$sheet_rs->Range(sprintf("%s%s:%s%s",$_->[0], $_->[1], $_->[0], $x))->{'Value'}}]);
         } 
-	}
+    }
     
     # 关闭 excel
     
-	$self->{"workbook"}->Close({SaveChanges => 0});
-	$self->{"excel"}->Close();
-	$self->{"excel"}->Quit();
+    $self->{"workbook"}->Close({SaveChanges => 0});
+    $self->{"excel"}->Close();
+    $self->{"excel"}->Quit();
     
-	return $xls_Data;
+    return $xls_Data;
 }
 
 sub insertExcel
@@ -152,20 +148,20 @@ sub insertExcel
     # 读取 rows = 2           -- 表头行号
     # 读取 XLS_data = []      -- 写入的数据(gbk编码后数据)
 
-	my $self = shift;
-	my $num = shift || 1;	        # 插入第几个表格
+    my $self = shift;
+    my $num = shift || 1;	    # 插入第几个表格
     
-	my $cbStart = shift;            # 开始前回调
-	my $cbEnd = shift;              # 结束前回调
+    my $cbStart = shift;            # 开始前回调
+    my $cbEnd = shift;              # 结束前回调
 	
-	# 参数检查
+    # 参数检查
     
-	if($self->{"workbook"} eq ""){
-		return 1;
-	}
-	if(scalar @{$self->{"cols"}} < scalar @{$self->{"XLS_data"}}){
-		return 1;
-	}
+    if($self->{"workbook"} eq ""){
+        return 1;
+    }
+    if(scalar @{$self->{"cols"}} < scalar @{$self->{"XLS_data"}}){
+        return 1;
+    }
 	
 	# 操作表格
 
