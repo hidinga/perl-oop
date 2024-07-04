@@ -221,29 +221,29 @@ sub insertExcel
 
 sub saveExcel
 {
-	my $self = shift;
+    my $self = shift;
 	
-	# 参数检查
+    # 参数检查
 	
-	if($self->{"workbook"} eq ""){
-		printf("%s\n", encode("gbk", "未初始化"));
-		return 1;
-	}
+    if($self->{"workbook"} eq ""){
+    	printf("%s\n", encode("gbk", "未初始化"));
+	return 1;
+    }
     
     # 删除空白表格
     
-	if($self->{"clear"})
-	{
-		my @dels = ();	
-		foreach(1..$self->{"workbook"}->Worksheets()->{'Count'}) {
-			unshift(@dels, $_) if $self->{"workbook"}->Worksheets($_)->{'Name'} =~ /^Sheet[0-9]{1,2}$/;
-		}
-		foreach(@dels){
-			$self->{"workbook"}->Worksheets($_)->Delete;   
-		}
+    if($self->{"clear"})
+    {
+    	my @dels = ();	
+	foreach(1..$self->{"workbook"}->Worksheets()->{'Count'}) {
+	    unshift(@dels, $_) if $self->{"workbook"}->Worksheets($_)->{'Name'} =~ /^Sheet[0-9]{1,2}$/;
 	}
+	foreach(@dels){
+	    $self->{"workbook"}->Worksheets($_)->Delete;   
+	}
+    }
 	
-	# 保存文件
+    # 保存文件
 	
     if($self->{"file"} ne "") {
         my $path_rs = sprintf("%s%s%s.xlsx", encode("gbk", $self->{"path"}), $self->{"path"} =~ /\\$/?"":"\\", encode("gbk", $self->{"file"}));
