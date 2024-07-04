@@ -163,12 +163,12 @@ sub insertExcel
         return 1;
     }
 	
-	# 操作表格
+    # 操作表格
 
-	my $sheet_rs = $self->{"workbook"}-> Worksheets($num);
-	$sheet_rs->{"NAME"} = encode("gbk", $self->{"name"});
+    my $sheet_rs = $self->{"workbook"}-> Worksheets($num);
+    $sheet_rs->{"NAME"} = encode("gbk", $self->{"name"});
 	
-	# 定义样式
+    # 定义样式
 	
     $sheet_rs -> Columns -> {Font} -> {Name} = encode("gbk", '微软雅黑');
     $sheet_rs -> Columns -> {Font} -> {Size} = 11;
@@ -179,36 +179,35 @@ sub insertExcel
      
     # 定义格式
      
-	if($cbStart) {
-		printf("\n%s\n\n", encode("gbk", "设定格式"));
-		$cbStart->($sheet_rs);
-	} else {
+    if($cbStart) {
+        printf("\n%s\n\n", encode("gbk", "设定格式"));
+        $cbStart->($sheet_rs);
+    } else {
         printf("\n");
     }
     
-	printf("%s \e[1;33m%s\e[0m %s [\e[1;33;41m%s\e[0m] ...\n\n", encode("gbk", "写入第"), $num, encode("gbk", "表格"), encode("gbk", $self->{"name"}));
+    printf("%s \e[1;33m%s\e[0m %s [\e[1;33;41m%s\e[0m] ...\n\n", encode("gbk", "写入第"), $num, encode("gbk", "表格"), encode("gbk", $self->{"name"}));
 	
-	foreach(1..scalar @{$self->{"cols"}})
-	{
-		my $c = $self->{"cols"}->[$_-1];															# 列字母
-		my $h = sprintf("%s%s", $c, ($self->{"rows"}-1));											# 标题定位块
+    foreach(1..scalar @{$self->{"cols"}})
+    {
+        my $c = $self->{"cols"}->[$_-1];															# 列字母
+        my $h = sprintf("%s%s", $c, ($self->{"rows"}-1));											# 标题定位块
         my $d = [map { [$_] } @{$self->{"XLS_data"}->[$_-1]}];                                      # 数据列
-		my $r = sprintf("%s%s:%s%s", $c, $self->{"rows"}, $c, $self->{"rows"}+scalar(@{$d})-1);		# 数据定位块
+        my $r = sprintf("%s%s:%s%s", $c, $self->{"rows"}, $c, $self->{"rows"}+scalar(@{$d})-1);		# 数据定位块
         
-		if(scalar @{$self->{"head"}} > 0){
+	if(scalar @{$self->{"head"}} > 0){
             printf("%s [\e[1;31m%s\e[0m] %s ...\n", encode("gbk", "正在写入"), $h, encode("gbk", "数据"));
-			$sheet_rs -> Range($h) -> {Value} = encode("gbk", $self->{"head"}->[$_-1]) if $self->{"head"}->[$_-1];
-		}
-        printf("%s [\e[1;31m%s\e[0m] %s ...\n", encode("gbk", "正在写入"), $r, encode("gbk", "数据"));
-        
-		$sheet_rs -> Range($r) -> {Value} = $d;
+            $sheet_rs -> Range($h) -> {Value} = encode("gbk", $self->{"head"}->[$_-1]) if $self->{"head"}->[$_-1];
 	}
+        printf("%s [\e[1;31m%s\e[0m] %s ...\n", encode("gbk", "正在写入"), $r, encode("gbk", "数据"));
+	$sheet_rs -> Range($r) -> {Value} = $d;
+    }
 
-	# 定义样式
+    # 定义样式
 	
-	if($cbEnd) {
+    if($cbEnd) {
         printf("\n%s\n", encode("gbk", "设定样式"));
-		$cbEnd->($sheet_rs);
+        $cbEnd->($sheet_rs);
     }
     
     # 冻结行
@@ -223,9 +222,9 @@ sub insertExcel
 sub saveExcel
 {
 	my $self = shift;
-    
+	
 	# 参数检查
-    
+	
 	if($self->{"workbook"} eq ""){
 		printf("%s\n", encode("gbk", "未初始化"));
 		return 1;
